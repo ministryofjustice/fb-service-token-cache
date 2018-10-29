@@ -35,6 +35,7 @@ after_success:
   - pip install --upgrade pip
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
+  - echo "$(aws ecr get-login --region us-east-1)" # debug only
   - eval $(aws ecr get-login --region us-east-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
   - docker build -t $ECR_REPO_NAME:latest-dev -f docker/Dockerfile .
   - docker tag $ECR_REPO_NAME:latest-dev $ECR_REPO_URL:latest-dev
