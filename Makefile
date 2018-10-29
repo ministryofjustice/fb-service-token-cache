@@ -29,8 +29,9 @@ build: init
 	  docker tag ${ECR_REPO_NAME}:latest-${env_stub} ${ECR_REPO_URL}:latest-${env_stub}
 
 login: init
-	#needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-	eval $(aws ecr get-login --no-include-email --region eu-west-1)
+	# needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+	# have to use backticks as cmd-substitution somehow results in empty string
+	eval "`aws ecr get-login --no-include-email --region eu-west-1`"
 
 push: login
 	docker push ${ECR_REPO_URL}:latest-${env_stub}
