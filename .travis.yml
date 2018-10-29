@@ -24,7 +24,7 @@ before_script:
 script:
     - bundle exec rails db:reset db:setup db:migrate RAILS_ENV=test
     - bundle exec rspec
-    - if [ $TRAVIS_TEST_RESULT -eq 0 ]; make dev build push; fi
+    - make dev build push
 
 sudo: required
 
