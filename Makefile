@@ -18,8 +18,7 @@ init:
 install_build_dependencies: init
 	# install aws cli w/o sudo
 	docker --version
-	pip install --upgrade pip && \
-		pip install --user awscli
+	pip install --user awscli
 	$(eval export PATH=${PATH}:${HOME}/.local/bin/)
 	echo $(shell which aws)
 
