@@ -24,21 +24,12 @@ before_script:
 script:
     - bundle exec rails db:reset db:setup db:migrate RAILS_ENV=test
     - bundle exec rspec
+    - if [ $TRAVIS_TEST_RESULT -eq 0 ]; make dev build push; fi
 
 sudo: required
 
 services:
   - docker
-
-after_success:
-  - docker --version  # document the version travis is using
-  - pip install --upgrade pip
-  - pip install --user awscli # install aws cli w/o sudo
-  - export PATH=$PATH:$HOME/.local/bin # put aws in the path
-  - docker build -t $ECR_REPO_NAME:latest-dev -f docker/Dockerfile .
-  - docker tag $ECR_REPO_NAME:latest-dev $ECR_REPO_URL:latest-dev
-  - eval $(aws ecr get-login --no-include-email --region us-east-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  - docker push $ECR_REPO_URL:latest-dev
 
 env:
   global:
