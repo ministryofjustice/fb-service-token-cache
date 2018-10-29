@@ -16,14 +16,15 @@ init:
 
 # Needs ECR_REPO_NAME & ECR_REPO_URL env vars
 install_build_dependencies: init
-	docker --version && \
-		pip install --upgrade pip && \
-		# install aws cli w/o sudo
-		pip install --user awscli && \
-		$(eval export PATH=${HOME}/.local/bin/:${PATH})
+	# install aws cli w/o sudo
+	docker --version
+	pip install --upgrade pip && \
+		pip install --user awscli
+	$(eval export PATH=${PATH}:${HOME}/.local/bin/)
+	echo $(shell which aws)
 
 
-build: init
+build: install_build_dependencies
 	docker build -t ${ECR_REPO_NAME}:latest-${env_stub} -f docker/Dockerfile . && \
 		docker tag ${ECR_REPO_NAME}:latest-${env_stub} ${ECR_REPO_URL}:latest-${env_stub}
 
