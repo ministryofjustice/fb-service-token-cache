@@ -96,7 +96,14 @@ RSpec.configure do |config|
 end
 
 require 'simplecov'
+require 'simplecov-console'
+
 SimpleCov.start do
   add_filter '/config/'
   add_filter '/spec/'
 end
+SimpleCov.minimum_coverage 79
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::Console
+])
