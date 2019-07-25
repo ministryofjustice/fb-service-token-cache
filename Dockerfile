@@ -1,4 +1,4 @@
-FROM ministryofjustice/ruby:2.5.1
+FROM ministryofjustice/ruby:2.6.3
 
 # install kubectl as described at
 # https://kubernetes.io/docs/tasks/tools/install-kubectl/
