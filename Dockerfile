@@ -15,6 +15,7 @@ RUN mkdir -p $RAILS_ROOT
 WORKDIR $RAILS_ROOT
 
 COPY . $RAILS_ROOT
+ENV BUNDLER_VERSION 2.0.2
 RUN gem install bundler
 RUN bundle install --jobs 4 --retry 5 --deployment --without test development
 
