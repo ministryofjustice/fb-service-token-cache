@@ -9,8 +9,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install correct Bundler version
+          command: |
+            export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+            gem install bundler
+      - run:
           name: bundle install
-          command: 'bundle install --deployment --jobs=2 --retry 3 --without development'
+          command: 'bundle install --deployment --jobs=2 --retry 3 --no-cache --without development'
       - run:
           name: test
           command: 'bundle exec rspec'
