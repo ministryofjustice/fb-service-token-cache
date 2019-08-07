@@ -10,11 +10,19 @@ RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
 # RUN apt-get update
 # RUN apt-get install -y kubectl
 
-RUN apk update && apk add curl git
+ADD https://storage.googleapis.com/kubernetes-release/release/v1.6.4/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/linux/amd64/kubectl
-RUN chmod u+x kubectl && mv kubectl /bin/kubectl
+ENV HOME=/config
 
+RUN set -x && \
+    apk add --no-cache curl ca-certificates && \
+    chmod +x /usr/local/bin/kubectl && \
+    \
+    # Create non-root user (with a randomly chosen UID/GUI).
+    adduser kubectl -Du 2342 -h /config && \
+    \
+    # Basic check it works.
+    kubectl version --client
 
 RUN addgroup -g 1001 -S appgroup && \
   adduser -u 1001 -S appuser -G appgroup
