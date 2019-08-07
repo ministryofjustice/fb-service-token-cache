@@ -3,23 +3,14 @@ jobs:
   test:
     working_directory: ~/circle
     docker:
-      - image: ministryofjustice/ruby:2.5.1
+      - image: circleci/ruby:2.6.3
         environment:
           RAILS_ENV: test
     steps:
       - checkout
       - run:
-          name: Install correct Bundler version
-          command: |
-            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
-            source $BASH_ENV
-            gem install bundler
-      - run:
-          name: bundle install
-          command: 'bundle install --deployment --jobs=2 --retry 3 --no-cache --without development'
-      - run:
           name: test
-          command: 'bundle exec rspec'
+          command: 'make spec'
   build_and_deploy_to_test:
     working_directory: ~/circle/git/fb-service-token-cache
     docker:
