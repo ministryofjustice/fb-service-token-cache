@@ -1,4 +1,4 @@
-FROM ruby:2.6.4-alpine3.9
+FROM ruby:2.6.5-alpine3.9
 
 RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.6.4/bin/linux/amd64/kubectl /usr/local/bin/kubectl
