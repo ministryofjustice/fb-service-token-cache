@@ -103,6 +103,7 @@ SimpleCov.start do
   add_filter '/spec/'
 end
 SimpleCov.minimum_coverage 77
+SimpleCov::Formatter::Console.output_style = 'block'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
   SimpleCov::Formatter::Console
