@@ -20,7 +20,7 @@ class Adapters::KubectlAdapter
 
     Adapters::ShellAdapter.output_of(command)
   rescue CmdFailedError => e
-    Raven.capture_exception(e)
+    Sentry.capture_exception(e)
     ''
   end
 
