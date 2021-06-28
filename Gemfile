@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby File.read('.ruby-version').chomp
 
 gem 'bootsnap', '>= 1.1.0', require: false
-gem 'rails', '~> 6.1.3'
+gem 'rails', '~> 6.1.4'
 gem 'puma', '~> 5.3'
 gem 'redis', '~> 4.3'
 gem 'sentry-rails', '~> 4.5.2'
