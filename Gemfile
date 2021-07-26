@@ -8,7 +8,7 @@ gem 'rails', '~> 6.1.4'
 gem 'puma', '~> 5.3'
 gem 'redis', '~> 4.3'
 gem 'sentry-rails', '~> 4.6.1'
-gem 'sentry-ruby', '~> 4.6.1'
+gem 'sentry-ruby', '~> 4.6.2'
 gem 'jwt'
 gem 'sqlite3'
 
