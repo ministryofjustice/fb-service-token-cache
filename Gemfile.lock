@@ -137,7 +137,7 @@ GEM
     msgpack (1.4.2)
     multipart-post (2.1.1)
     nenv (0.3.0)
-    nio4r (2.5.7)
+    nio4r (2.5.8)
     nokogiri (1.12.1)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
@@ -147,7 +147,7 @@ GEM
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    puma (5.3.2)
+    puma (5.4.0)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -259,7 +259,7 @@ DEPENDENCIES
   guard-rspec
   jwt
   listen
-  puma (~> 5.3)
+  puma (~> 5.4)
   rails (~> 6.1.4)
   redis (~> 4.4)
   rspec-rails (>= 3.5.0)
