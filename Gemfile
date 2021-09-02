@@ -7,8 +7,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rails', '~> 6.1.4'
 gem 'puma', '~> 5.4'
 gem 'redis', '~> 4.4'
-gem 'sentry-rails', '~> 4.6.5'
-gem 'sentry-ruby', '~> 4.6.5'
+gem 'sentry-rails', '~> 4.7.1'
+gem 'sentry-ruby', '~> 4.7.1'
 gem 'jwt'
 gem 'sqlite3'
 
