@@ -1,0 +1,81 @@
+---
+# web front-end
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "fb-service-token-cache-{{ .Values.environmentName }}"
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: "fb-service-token-cache-{{ .Values.environmentName }}"
+  template:
+    metadata:
+      labels:
+        app: "fb-service-token-cache-{{ .Values.environmentName }}"
+        appGroup: "fb-service-token-cache"
+        tier: "frontend"
+    spec:
+      serviceAccountName: "formbuilder-service-token-cache-{{ .Values.environmentName }}"
+      containers:
+      - name: "fb-service-token-cache-{{ .Values.environmentName }}"
+        image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-service-token-cache:{{ .Values.circleSha1 }}"
+        securityContext:
+          runAsUser: 1001
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          successThreshold: 1
+
+        # non-secret env vars
+        # defined in config_map.yaml
+        envFrom:
+          - configMapRef:
+              name: fb-service-token-cache-env-{{ .Values.environmentName }}
+        env:
+          - name: KUBECTL_BEARER_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.KUBECTL_BEARER_TOKEN }}
+                key: token
+          - name: KUBECTL_SERVICES_NAMESPACE
+            value: formbuilder-services-{{ .Values.environmentName }}
+          - name: KUBECTL_PLATFORM_NAMESPACE
+            value: formbuilder-platform-{{ .Values.environmentName }}
+          # secrets created by terraform
+          # to access infrastructure defined in
+          # cloud-platforms-environments
+          - name: REDIS_AUTH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: elasticache-formbuilder-service-token-cache-{{ .Values.environmentName }}
+                key: auth_token
+          # must use 'rediss' (two s'es) when TLS is enabled
+          - name: REDIS_PROTOCOL
+            value: 'rediss://'
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: elasticache-formbuilder-service-token-cache-{{ .Values.environmentName }}
+                key: primary_endpoint_address
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                name: fb-service-token-cache-app-secrets-{{ .Values.environmentName }}
+                key: secret_key_base
+          - name: SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                name: fb-service-token-cache-app-secrets-{{ .Values.environmentName }}
+                key: sentry_dsn
