@@ -1,0 +1,35 @@
+# any pod in the formbuilder-platform-{{ .Values.environmentName }} namespace that has a label
+# fb-service-token-cache-access: true
+# should be able to access any pod in the formbuilder-platform-{{ .Values.environmentName }} namespace
+# that has a label "app=fb-service-token-cache-{{ .Values.environmentName }}"
+# on port 3000
+# NOTE: NetworkPolicy only affects pods, Services are effectively transparent
+# to them - so it doesn't matter that pod x is accessing pod y port p via
+# service z port p2, you have to set up the policy between
+# pod x and pod y port p
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-only-platform-pods-to-access-service-token-cache
+  namespace: formbuilder-platform-{{ .Values.environmentName }}
+spec:
+  podSelector:
+    matchLabels:
+      app: fb-service-token-cache-{{ .Values.environmentName }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          fb-service-token-cache-access: "true"
+    ports:
+    - protocol: TCP
+      port: 3000
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: formbuilder-saas-{{ .Values.platformEnv }}
+    ports:
+    - protocol: TCP
+      port: 3000
