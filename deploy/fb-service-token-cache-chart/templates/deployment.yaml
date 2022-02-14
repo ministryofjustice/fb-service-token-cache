@@ -5,12 +5,12 @@ kind: Deployment
 metadata:
   name: "fb-service-token-cache-{{ .Values.environmentName }}"
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicas }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 100%
-      maxUnavailable: 50%
+      maxSurge: {{ .Values.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.strategy.maxUnavailable }}
   selector:
     matchLabels:
       app: "fb-service-token-cache-{{ .Values.environmentName }}"
@@ -38,16 +38,16 @@ spec:
           httpGet:
             path: /health
             port: 3000
-          initialDelaySeconds: 15
-          periodSeconds: 5
-          successThreshold: 1
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
         readinessProbe:
           httpGet:
             path: /readiness
             port: 3000
-          initialDelaySeconds: 15
-          periodSeconds: 30
-          successThreshold: 1
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
 
         # non-secret env vars
         # defined in config_map.yaml
