@@ -157,6 +157,50 @@ jobs:
           success_message: ":rocket:  Successfully deployed to Live Production  :guitar:"
           failure_message: ":alert:  Failed to deploy to Live Production  :try_not_to_cry:"
           include_job_number_field: false
+  deploy_to_live_dev_eks:
+    working_directory: ~/circle/git/fb-service-token-cache
+    docker: *ecr_base_image
+    steps:
+      - checkout
+      - add_ssh_keys: *ssh_keys
+      - setup_remote_docker
+      - run: *base_environment_variables
+      - run: *deploy_scripts
+      - run:
+          name: deploy to live dev (EKS)
+          environment:
+            APPLICATION_NAME: fb-service-token-cache
+            PLATFORM_ENV: live
+            DEPLOYMENT_ENV: dev
+            K8S_NAMESPACE: formbuilder-platform-live-dev
+          command: './deploy-scripts/bin/deploy-eks'
+      - slack/status:
+          only_for_branches: master
+          success_message: ":rocket:  Successfully deployed to Live Dev  :guitar:"
+          failure_message: ":alert:  Failed to deploy to Live Dev  :try_not_to_cry:"
+          include_job_number_field: false
+  deploy_to_live_production_eks:
+    working_directory: ~/circle/git/fb-service-token-cache
+    docker: *ecr_base_image
+    steps:
+      - checkout
+      - add_ssh_keys: *ssh_keys
+      - setup_remote_docker
+      - run: *base_environment_variables
+      - run: *deploy_scripts
+      - run:
+          name: deploy to live production (EKS)
+          environment:
+            APPLICATION_NAME: fb-service-token-cache
+            PLATFORM_ENV: live
+            DEPLOYMENT_ENV: production
+            K8S_NAMESPACE: formbuilder-platform-live-production
+          command: './deploy-scripts/bin/deploy-eks'
+      - slack/status:
+          only_for_branches: master
+          success_message: ":rocket:  Successfully deployed to Live Production  :guitar:"
+          failure_message: ":alert:  Failed to deploy to Live Production  :try_not_to_cry:"
+          include_job_number_field: false
   acceptance_tests:
     docker: *ecr_base_image
     resource_class: large
