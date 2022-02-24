@@ -45,7 +45,7 @@ jobs:
           environment:
             ENVIRONMENT_NAME: test
           command: './deploy-scripts/bin/build'
-  deploy_to_test_dev:
+  deploy_to_test_dev_eks:
     working_directory: ~/circle/git/fb-service-token-cache
     docker: *ecr_base_image
     steps:
@@ -53,40 +53,6 @@ jobs:
       - add_ssh_keys: &ssh_keys
           fingerprints:
             - "e3:25:34:15:2b:c4:d3:b7:c3:94:9f:50:dd:c3:0f:de"
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
-          name: deploy to test dev
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: test
-            DEPLOYMENT_ENV: dev
-            K8S_NAMESPACE: formbuilder-platform-test-dev
-          command: './deploy-scripts/bin/deploy'
-      - slack/status: *slack_status
-  deploy_to_test_production:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
-          name: deploy to test production
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: test
-            DEPLOYMENT_ENV: production
-            K8S_NAMESPACE: formbuilder-platform-test-production
-          command: './deploy-scripts/bin/deploy'
-      - slack/status: *slack_status
-  deploy_to_test_dev_eks:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -115,50 +81,6 @@ jobs:
             K8S_NAMESPACE: formbuilder-platform-test-production
           command: './deploy-scripts/bin/deploy-eks'
       - slack/status: *slack_status
-  deploy_to_live_dev:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
-      - setup_remote_docker: *remote_docker
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
-          name: deploy to live dev
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: live
-            DEPLOYMENT_ENV: dev
-            K8S_NAMESPACE: formbuilder-platform-live-dev
-          command: './deploy-scripts/bin/deploy'
-      - slack/status:
-          only_for_branches: master
-          success_message: ":rocket:  Successfully deployed to Live Dev  :guitar:"
-          failure_message: ":alert:  Failed to deploy to Live Dev  :try_not_to_cry:"
-          include_job_number_field: false
-  deploy_to_live_production:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
-      - setup_remote_docker: *remote_docker
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
-          name: deploy to live production
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: live
-            DEPLOYMENT_ENV: production
-            K8S_NAMESPACE: formbuilder-platform-live-production
-          command: './deploy-scripts/bin/deploy'
-      - slack/status:
-          only_for_branches: master
-          success_message: ":rocket:  Successfully deployed to Live Production  :guitar:"
-          failure_message: ":alert:  Failed to deploy to Live Production  :try_not_to_cry:"
-          include_job_number_field: false
   deploy_to_live_dev_eks:
     working_directory: ~/circle/git/fb-service-token-cache
     docker: *ecr_base_image
@@ -235,12 +157,6 @@ workflows:
             branches:
               only:
                 - master
-      - deploy_to_test_dev:
-          requires:
-            - build_and_push_image
-      - deploy_to_test_production:
-          requires:
-            - build_and_push_image
       - deploy_to_test_dev_eks:
           requires:
             - build_and_push_image
@@ -249,18 +165,12 @@ workflows:
             - build_and_push_image
       - acceptance_tests:
           requires:
-            - deploy_to_test_dev
-            - deploy_to_test_production
+            - deploy_to_test_dev_eks
+            - deploy_to_test_production_eks
           filters:
             branches:
               only:
                 - master
-      - deploy_to_live_dev:
-          requires:
-            - acceptance_tests
-      - deploy_to_live_production:
-          requires:
-            - acceptance_tests
       - deploy_to_live_dev_eks:
           requires:
             - acceptance_tests
@@ -269,7 +179,5 @@ workflows:
             - acceptance_tests
       - smoke_tests:
           requires:
-            - deploy_to_live_dev
-            - deploy_to_live_production
             - deploy_to_live_dev_eks
             - deploy_to_live_production_eks
