@@ -11,7 +11,9 @@ jobs:
           RAILS_ENV: test
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker: &remote_docker
+          version: 20.10.11
+          docker_layer_caching: true
       - run:
           name: test
           command: 'make spec'
@@ -37,7 +39,7 @@ jobs:
       - run: &deploy_scripts
           name: cloning deploy scripts
           command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run:
           name: build and push docker images
           environment:
@@ -119,7 +121,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys: *ssh_keys
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -141,7 +143,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys: *ssh_keys
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -163,7 +165,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys: *ssh_keys
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -185,7 +187,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys: *ssh_keys
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -205,7 +207,7 @@ jobs:
     docker: *ecr_base_image
     resource_class: large
     steps:
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run: *deploy_scripts
       - run:
           name: Run acceptance tests
@@ -214,7 +216,7 @@ jobs:
   smoke_tests:
     docker: *ecr_base_image
     steps:
-      - setup_remote_docker
+      - setup_remote_docker: *remote_docker
       - run: *deploy_scripts
       - run:
           name: Run smoke tests
