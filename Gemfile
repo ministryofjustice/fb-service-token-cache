@@ -11,6 +11,9 @@ gem 'sentry-rails', '~> 5.3.1'
 gem 'sentry-ruby', '~> 5.3.1'
 gem 'jwt'
 gem 'sqlite3'
+# Adding this removes some deprecation warnings, caused by double-loading of the net-protocol library
+# we *might* be able to remove this after upgrading to Ruby 3
+gem 'net-http'
 
 group :development, :test do
   gem 'dotenv-rails', require: 'dotenv/rails-now'
