@@ -4,13 +4,16 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby File.read('.ruby-version').chomp
 
 gem 'bootsnap', '>= 1.1.0', require: false
-gem 'rails', '>= 6.1.5.1', '< 7.0.0'
+gem 'rails', '~> 7.0.0'
 gem 'puma', '~> 5.6'
 gem 'redis', '~> 4.6'
 gem 'sentry-rails', '~> 5.3.1'
 gem 'sentry-ruby', '~> 5.3.1'
 gem 'jwt'
 gem 'sqlite3'
+# Adding this removes some deprecation warnings, caused by double-loading of the net-protocol library
+# we *might* be able to remove this after upgrading to Ruby 3
+gem 'net-http'
 
 group :development, :test do
   gem 'dotenv-rails', require: 'dotenv/rails-now'
