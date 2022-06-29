@@ -14,10 +14,11 @@ successful calls in Elasticache Redis for SERVICE_TOKEN_CACHE_TTL seconds.
 
 Prerequisites:
 
-- Docker
+- Ruby 2.7.6
 
 ```sh
-make spec
+bundle install
+bundle exec rspec
 ```
 
 ## Deployment
