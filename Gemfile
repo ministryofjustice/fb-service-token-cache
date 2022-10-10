@@ -7,8 +7,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rails', '~> 7.0.4'
 gem 'puma', '~> 5.6'
 gem 'redis', '~> 5.0'
-gem 'sentry-rails', '~> 5.4.2'
-gem 'sentry-ruby', '~> 5.4.2'
+gem 'sentry-rails', '~> 5.5.0'
+gem 'sentry-ruby', '~> 5.5.0'
 gem 'jwt'
 gem 'sqlite3'
 # Adding this removes some deprecation warnings, caused by double-loading of the net-protocol library
