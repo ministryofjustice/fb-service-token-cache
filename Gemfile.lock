@@ -125,7 +125,7 @@ GEM
     minitest (5.16.3)
     msgpack (1.5.4)
     nenv (0.3.0)
-    net-http (0.2.2)
+    net-http (0.3.0)
       uri
     net-imap (0.2.3)
       digest
