@@ -3,24 +3,6 @@ orbs:
   slack: circleci/slack@3.4.2
 
 jobs:
-  test:
-    working_directory: ~/circle
-    docker:
-      - image: 'cimg/ruby:2.7.5'
-        environment:
-          RAILS_ENV: test
-    steps:
-      - checkout
-      - setup_remote_docker: &remote_docker
-          docker_layer_caching: true
-      - run:
-          name: test
-          command: 'make spec'
-      - slack/status: &slack_status
-          fail_only: true
-          only_for_branches: master
-          failure_message: ":facepalm:  Failed job $CIRCLE_JOB  :homer-disappear:"
-          include_job_number_field: false
   build_and_push_image:
     working_directory: ~/circle/git/fb-service-token-cache
     docker: &ecr_base_image
@@ -38,13 +20,14 @@ jobs:
       - run: &deploy_scripts
           name: cloning deploy scripts
           command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
-      - setup_remote_docker: *remote_docker
+      - setup_remote_docker: &remote_docker
+          docker_layer_caching: true
       - run:
           name: build and push docker images
           environment:
             ENVIRONMENT_NAME: test
           command: './deploy-scripts/bin/build'
-  deploy_to_test_dev_eks:
+  deploy_to_test_production_eks:
     working_directory: ~/circle/git/fb-service-token-cache
     docker: *ecr_base_image
     steps:
@@ -55,23 +38,6 @@ jobs:
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
-          name: deploy to test dev (EKS cluster)
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: test
-            DEPLOYMENT_ENV: dev
-            K8S_NAMESPACE: formbuilder-platform-test-dev
-          command: './deploy-scripts/bin/deploy-eks'
-      - slack/status: *slack_status
-  deploy_to_test_production_eks:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
           name: deploy to test production (EKS cluster)
           environment:
             APPLICATION_NAME: fb-service-token-cache
@@ -79,104 +45,21 @@ jobs:
             DEPLOYMENT_ENV: production
             K8S_NAMESPACE: formbuilder-platform-test-production
           command: './deploy-scripts/bin/deploy-eks'
-      - slack/status: *slack_status
-  deploy_to_live_dev_eks:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
-      - setup_remote_docker: *remote_docker
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
-          name: deploy to live dev (EKS)
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: live
-            DEPLOYMENT_ENV: dev
-            K8S_NAMESPACE: formbuilder-platform-live-dev
-          command: './deploy-scripts/bin/deploy-eks'
-      - slack/status:
+      - slack/status: &slack_status
+          fail_only: true
           only_for_branches: master
-          success_message: ":rocket:  Successfully deployed to Live Dev  :guitar:"
-          failure_message: ":alert:  Failed to deploy to Live Dev  :try_not_to_cry:"
+          failure_message: ":facepalm:  Failed job $CIRCLE_JOB  :homer-disappear:"
           include_job_number_field: false
-  deploy_to_live_production_eks:
-    working_directory: ~/circle/git/fb-service-token-cache
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys: *ssh_keys
-      - setup_remote_docker: *remote_docker
-      - run: *base_environment_variables
-      - run: *deploy_scripts
-      - run:
-          name: deploy to live production (EKS)
-          environment:
-            APPLICATION_NAME: fb-service-token-cache
-            PLATFORM_ENV: live
-            DEPLOYMENT_ENV: production
-            K8S_NAMESPACE: formbuilder-platform-live-production
-          command: './deploy-scripts/bin/deploy-eks'
-      - slack/status:
-          only_for_branches: master
-          success_message: ":rocket:  Successfully deployed to Live Production  :guitar:"
-          failure_message: ":alert:  Failed to deploy to Live Production  :try_not_to_cry:"
-          include_job_number_field: false
-  acceptance_tests:
-    docker: *ecr_base_image
-    resource_class: large
-    steps:
-      - setup_remote_docker: *remote_docker
-      - run: *deploy_scripts
-      - run:
-          name: Run acceptance tests
-          command: './deploy-scripts/bin/acceptance_tests'
-      - slack/status: *slack_status
-  smoke_tests:
-    docker: *ecr_base_image
-    steps:
-      - setup_remote_docker: *remote_docker
-      - run: *deploy_scripts
-      - run:
-          name: Run smoke tests
-          command: './deploy-scripts/bin/smoke_tests'
-      - slack/status: *slack_status
 
 workflows:
   version: 2
   test_and_build:
     jobs:
-      - test
       - build_and_push_image:
-          requires:
-            - test
           filters:
             branches:
               only:
-                - master
-      - deploy_to_test_dev_eks:
-          requires:
-            - build_and_push_image
+                - python-firebreak
       - deploy_to_test_production_eks:
           requires:
             - build_and_push_image
-      - acceptance_tests:
-          requires:
-            - deploy_to_test_dev_eks
-            - deploy_to_test_production_eks
-          filters:
-            branches:
-              only:
-                - master
-      - deploy_to_live_dev_eks:
-          requires:
-            - acceptance_tests
-      - deploy_to_live_production_eks:
-          requires:
-            - acceptance_tests
-      - smoke_tests:
-          requires:
-            - deploy_to_live_dev_eks
-            - deploy_to_live_production_eks
