@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  # service-token-cache-app:
+  #   container_name: service-token-cache-app
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     REDIS_URL: service-token-cache-redis
+  #   depends_on:
+  #     - service-token-cache-redis
+  #   ports:
+  #     - 3004:5000
+
+  service-token-cache-redis:
+    container_name: service-token-cache-redis
+    image: redis:5.0.6-alpine
+    ports:
+    - 6379:6379
+
