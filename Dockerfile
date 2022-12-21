@@ -1,9 +1,6 @@
-FROM ruby:2.7.5-alpine3.13
+FROM python:3.9-slim-buster
 
-RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
-
-ENV HOME=/config
 
 RUN set -x && \
     apk add --no-cache curl ca-certificates && \
@@ -13,25 +10,11 @@ RUN set -x && \
     # Basic check it works.
     kubectl version --client
 
-RUN addgroup -g 1001 -S appgroup && \
-  adduser -u 1001 -S appuser -G appgroup
+WORKDIR /python-docker
 
-WORKDIR /app
-
-COPY Gemfile* .ruby-version ./
-
-ARG BUNDLE_FLAGS
-RUN gem install bundler
-RUN bundle install --jobs 4
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
 COPY . .
 
-RUN chown -R 1001:appgroup /app
-
-USER 1001
-
-ENV APP_PORT 3000
-EXPOSE $APP_PORT
-
-ARG RAILS_ENV=production
-CMD RAILS_ENV=${RAILS_ENV} bundle exec rails s -e ${RAILS_ENV} -p ${APP_PORT} --binding=0.0.0.0
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
