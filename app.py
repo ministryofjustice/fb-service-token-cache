@@ -7,12 +7,13 @@ import sentry_sdk
 import os
 
 app = Flask(__name__)
+load_dotenv()
+
 REDIS_PROTOCOL = os.getenv("REDIS_PROTOCOL")
 REDIS_AUTH_TOKEN = os.getenv("REDIS_AUTH_TOKEN")
 REDIS_URL = f"{REDIS_PROTOCOL}{os.getenv('REDIS_URL')}"
 
 redis_client = redis.Redis.from_url(url=REDIS_URL, password=REDIS_AUTH_TOKEN)
-load_dotenv()
 
 if os.getenv("SENTRY_DSN") != '':
     sentry_sdk.init(
@@ -30,7 +31,18 @@ def ready():
     return 'ready'
 
 
+@app.route("/service/v2/<service_slug>")
+def service_public_key(service_slug):
+    print('getting key for service')
+    return get_public_key(service_slug, os.getenv('KUBECTL_SERVICES_NAMESPACE'))
+
+
 @app.route("/v3/applications/<service_slug>/namespaces/<namespace>")
+def application_public_key(service_slug, namespace):
+    print('getting key for app')
+    return get_public_key(service_slug, namespace)
+
+
 def get_public_key(service_slug, namespace):
     key_name = key(escape(service_slug))
     print('getting key from redis')
@@ -47,10 +59,10 @@ def get_public_key(service_slug, namespace):
               print('found key in k8s')
               print('saving key to redis')
               redis_client.set(key_name, k8s_public_key, ex=int(os.getenv('SERVICE_TOKEN_CACHE_TTL')))
-              return jsonify({ "token": k8s_public_key })
+              return jsonify({ "token": k8s_public_key.replace("'", "") })
       else:
           print('found key in redis')
-          return jsonify({ "token": public_key.decode("utf-8") })
+          return jsonify({ "token": public_key.decode("utf-8").replace("'", "") })
     except Exception as e:
       capture_message(str(e))
       return jsonify({ "token": '' })
