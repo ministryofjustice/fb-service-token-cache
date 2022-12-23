@@ -1,5 +1,6 @@
 deploy-eks
 tmp
+log
 .github
 .circleci
 .env

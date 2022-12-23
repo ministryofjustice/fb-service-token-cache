@@ -1,4 +1,4 @@
-FROM python:3.11.1-alpine3.17
+FROM golang:1.19.4-alpine3.17
 
 RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
 
@@ -15,18 +15,22 @@ RUN set -x && \
 RUN addgroup -g 1001 -S appgroup && \
   adduser -u 1001 -S appuser -G appgroup
 
-WORKDIR /python-docker
+WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY go.mod ./
+COPY go.sum ./
 
-COPY . .
+RUN go mod download
 
-RUN chown -R 1001:appgroup /python-docker
+COPY *.go ./
+
+RUN go build -o /fb-service-token-cache
+
+RUN chown -R 1001:appgroup /app
 
 USER 1001
 
 ENV APP_PORT 3000
 EXPOSE $APP_PORT
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=3000"]
+CMD [ "/fb-service-token-cache"]
