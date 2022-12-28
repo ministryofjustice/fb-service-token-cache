@@ -5,6 +5,7 @@ extern crate dotenv;
 use dotenv::dotenv;
 use std::env;
 use serde::Serialize;
+use std::process::Command;
 
 #[derive(Serialize)]
 struct Payload {
@@ -25,6 +26,9 @@ async fn readiness() -> impl Responder {
 async fn service_public_key(path: web::Path<String>) -> impl Responder {
     let namespace = env::var("KUBECTL_SERVICES_NAMESPACE").expect("service namespace is not set");
     let service_slug = path.into_inner();
+
+    println!("{}", service_slug);
+
     let public_key = get_public_key(service_slug.to_string(), namespace);
     let payload = Payload { token: public_key };
 
@@ -42,29 +46,12 @@ async fn application_public_key(path: web::Path<(String, String)>) -> impl Respo
 
 fn get_public_key(service_slug: String, namespace: String) -> String {
     let mut redis_connection = redis_connection();
+    let key_name = "encoded-public-key-".to_owned() + &service_slug;
+    let result : Option<String> = redis::cmd("GET").arg(key_name).query(&mut redis_connection).unwrap();
 
-    let key_name = format!("encoded-pubic-key-{}", service_slug);
-    let mut public_key: String = redis::cmd("GET")
-        .arg(key_name)
-        .query(&mut redis_connection)
-        .expect(format!("failed to execute GET for {}", key_name).as_str());
-
-    if public_key.is_empty() {
-        public_key = get_k8s_public_key(service_slug, namespace);
-
-        if public_key.is_empty() {
-            return "Key not found in Redis or in K8s".to_string();
-        } else {
-            let _result: String = redis::cmd("SET")
-                .arg(key_name)
-                .arg(public_key)
-                .query(&mut redis_connection)
-                .expect(format!("failed to execute SET for {}", key_name).as_str());
-
-            return public_key;
-        }
-    } else {
-        return public_key;
+    match result {
+        Some(public_key) => return public_key,
+        None => return get_k8s_public_key(service_slug, namespace)
     }
 }
 
@@ -88,9 +75,11 @@ fn redis_connection() -> redis::Connection {
     let redis_host_name =
         env::var("REDIS_URL").expect("missing environment variable REDIS_URL");
 
-    let redis_password = env::var("REDIS_AUTH_TOKEN").unwrap_or_default();
+    // let redis_password = env::var("REDIS_AUTH_TOKEN").unwrap_or_default();
     let uri_scheme = env::var("REDIS_PROTOCOL").unwrap_or("".to_string());
-    let redis_conn_url = format!("{}://:{}@{}", uri_scheme, redis_password, redis_host_name);
+    // let redis_conn_url = format!("{}://:{}@{}", uri_scheme, redis_password, redis_host_name);
+    let redis_conn_url = format!("{}{}", uri_scheme, redis_host_name);
+
     redis::Client::open(redis_conn_url)
         .expect("Invalid connection URL")
         .get_connection()
