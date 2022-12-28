@@ -59,7 +59,7 @@ workflows:
           filters:
             branches:
               only:
-                - python-firebreak
+                - rust-firebreak
       - deploy_to_test_production_eks:
           requires:
             - build_and_push_image

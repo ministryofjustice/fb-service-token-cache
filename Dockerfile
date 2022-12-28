@@ -1,6 +1,6 @@
-FROM python:3.11.1-alpine3.17
+FROM rust:alpine3.16
 
-RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
+RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata openssl openssl-dev
 
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 
@@ -15,18 +15,20 @@ RUN set -x && \
 RUN addgroup -g 1001 -S appgroup && \
   adduser -u 1001 -S appuser -G appgroup
 
-WORKDIR /python-docker
+# WORKDIR /rust-docker
+# RUN cargo init
+# COPY Cargo.toml /rust-docker/Cargo.toml
+# RUN cargo fetch
+# COPY . /rust-docker
+COPY ./ ./
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN cargo build --release
 
-COPY . .
-
-RUN chown -R 1001:appgroup /python-docker
+RUN chown -R 1001:appgroup ./target
 
 USER 1001
 
 ENV APP_PORT 3000
 EXPOSE $APP_PORT
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=3000"]
+CMD [ "./target/release/fb-service-token-cache"]
