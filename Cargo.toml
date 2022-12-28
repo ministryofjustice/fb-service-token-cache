@@ -10,3 +10,5 @@ edition = "2021"
 actix-web = "4"
 dotenv = "0.15.0"
 dotenv_codegen = "0.15.0"
+serde = { version = "1.0.151", features = ["derive"] }
+redis = { version = "0.19.0", features = ["tls"] }
