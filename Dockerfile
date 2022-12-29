@@ -1,6 +1,4 @@
-FROM python:3.11.1-alpine3.17
-
-RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
+FROM fabiocicerchia/nginx-lua
 
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 
@@ -15,18 +13,14 @@ RUN set -x && \
 RUN addgroup -g 1001 -S appgroup && \
   adduser -u 1001 -S appuser -G appgroup
 
-WORKDIR /python-docker
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY bin/health.sh /usr/bin/health.sh
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
-
-COPY . .
-
-RUN chown -R 1001:appgroup /python-docker
+RUN chown -R 1001:appgroup /etc/nginx/*
+RUN chown -R 1001:appgroup /var/run/*
+RUN chown -R 1001:appgroup /usr/bin/health.sh
 
 USER 1001
 
 ENV APP_PORT 3000
 EXPOSE $APP_PORT
-
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=3000"]
