@@ -72,7 +72,7 @@ async fn main() -> std::io::Result<()> {
             .service(service_public_key)
             .service(application_public_key)
     })
-    .bind(("127.0.0.1", 3000))?
+    .bind(("0.0.0.0", 3000))?
     .run()
     .await
 }
