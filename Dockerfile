@@ -1,5 +1,7 @@
 FROM fabiocicerchia/nginx-lua
 
+RUN apk add lua-resty-redis
+
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 
 RUN set -x && \
@@ -14,11 +16,16 @@ RUN addgroup -g 1001 -S appgroup && \
   adduser -u 1001 -S appuser -G appgroup
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 COPY bin/health.sh /usr/bin/health.sh
+COPY bin/health.sh /bin/health.sh
+COPY bin/health.sh /tmp/health.sh
 
 RUN chown -R 1001:appgroup /etc/nginx/*
 RUN chown -R 1001:appgroup /var/run/*
-RUN chown -R 1001:appgroup /usr/bin/health.sh
+# RUN chown -R 1001:appgroup /usr/bin/health.sh
+RUN chown -R 1001:appgroup /bin/health.sh
+RUN chown -R 1001:appgroup /tmp/health.sh
 
 USER 1001
 
