@@ -34,7 +34,7 @@ jobs:
           name: Setup base environment variable
           command: |
             echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
-            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_e32534152bc4d3b7c3949f50ddc30fde" >> $BASH_ENV
+            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_0fcb7f1c38e4c0b617fe0abcc9295dbe" >> $BASH_ENV
       - run: &deploy_scripts
           name: cloning deploy scripts
           command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
@@ -51,7 +51,7 @@ jobs:
       - checkout
       - add_ssh_keys: &ssh_keys
           fingerprints:
-            - "e3:25:34:15:2b:c4:d3:b7:c3:94:9f:50:dd:c3:0f:de"
+            - "0f:cb:7f:1c:38:e4:c0:b6:17:fe:0a:bc:c9:29:5d:be"
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -150,6 +150,9 @@ workflows:
     jobs:
       - test
       - build_and_push_image:
+          context: &moj-forms-context
+            - moj-forms
+            - moj-forms-platform-apps
           requires:
             - test
           filters:
@@ -157,12 +160,15 @@ workflows:
               only:
                 - master
       - deploy_to_test_dev_eks:
+          context: *moj-forms-context
           requires:
             - build_and_push_image
       - deploy_to_test_production_eks:
+          context: *moj-forms-context
           requires:
             - build_and_push_image
       - acceptance_tests:
+          context: *moj-forms-context
           requires:
             - deploy_to_test_dev_eks
             - deploy_to_test_production_eks
@@ -171,12 +177,15 @@ workflows:
               only:
                 - master
       - deploy_to_live_dev_eks:
+          context: *moj-forms-context
           requires:
             - acceptance_tests
       - deploy_to_live_production_eks:
+          context: *moj-forms-context
           requires:
             - acceptance_tests
       - smoke_tests:
+          context: *moj-forms-context
           requires:
             - deploy_to_live_dev_eks
             - deploy_to_live_production_eks
