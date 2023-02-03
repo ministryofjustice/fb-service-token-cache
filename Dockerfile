@@ -1,6 +1,8 @@
 FROM ruby:2.7.7-alpine3.16
 
 RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
+RUN apk add --no-cache gcompat
+
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 
 ENV HOME=/config
@@ -22,6 +24,7 @@ COPY Gemfile* .ruby-version ./
 
 ARG BUNDLE_FLAGS
 RUN gem install bundler
+RUN bundle config set force_ruby_platform true
 RUN bundle install --jobs 4
 
 COPY . .
