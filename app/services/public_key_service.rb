@@ -14,7 +14,7 @@ class PublicKeyService
       if cached_value
         cached_value
       else
-        adapter.put(key, public_key, ex: ttl_in_seconds)
+        adapter.put(key, public_key, { ex: ttl_in_seconds })
         public_key
       end
     end

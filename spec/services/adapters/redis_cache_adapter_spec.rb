@@ -32,7 +32,7 @@ describe Adapters::RedisCacheAdapter do
     end
 
     it 'calls set on the connection with the given key and value' do
-      expect(mock_connection).to receive(:set).with(given_key, given_value, {})
+      expect(mock_connection).to receive(:set).with(given_key, given_value)
       described_class.put(given_key, given_value)
     end
 
