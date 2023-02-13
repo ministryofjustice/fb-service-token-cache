@@ -23,8 +23,8 @@ RSpec.describe ServiceTokenV3Controller do
 
     context 'when IGNORE_CACHE is set' do
       before do
-        ENV.stub(:[])
-        ENV.stub(:[]).with('IGNORE_CACHE').and_return('true')
+        allow(ENV).to receive(:[])
+        allow(ENV).to receive(:[]).with('IGNORE_CACHE').and_return('true')
         allow(Support::ServiceTokenAuthoritativeSource).to receive(:get_public_key).and_return('v3-public-key')
         get :show, params: params
       end
