@@ -34,7 +34,7 @@ jobs:
           name: Setup base environment variable
           command: |
             echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
-            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_0fcb7f1c38e4c0b617fe0abcc9295dbe" >> $BASH_ENV
+            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_ae20dfbeaf13151cc489e7f83fd5c17d" >> $BASH_ENV
       - run: &deploy_scripts
           name: cloning deploy scripts
           command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
@@ -51,7 +51,7 @@ jobs:
       - checkout
       - add_ssh_keys: &ssh_keys
           fingerprints:
-            - "0f:cb:7f:1c:38:e4:c0:b6:17:fe:0a:bc:c9:29:5d:be"
+            - "ae:20:df:be:af:13:15:1c:c4:89:e7:f8:3f:d5:c1:7d"
       - run: *base_environment_variables
       - run: *deploy_scripts
       - run:
@@ -128,6 +128,7 @@ jobs:
     docker: *ecr_base_image
     resource_class: large
     steps:
+      - checkout
       - setup_remote_docker: *remote_docker
       - run: *deploy_scripts
       - run:
@@ -137,6 +138,7 @@ jobs:
   smoke_tests:
     docker: *ecr_base_image
     steps:
+      - checkout
       - setup_remote_docker: *remote_docker
       - run: *deploy_scripts
       - run:
