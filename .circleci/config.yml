@@ -179,8 +179,8 @@ workflows:
             - moj-forms
             - moj-forms-platform-apps
       - test:
-        requires:
-          - login-to-aws
+          requires:
+            - login-to-aws
       - build_and_push_image:
           context: *moj-forms-context
           requires:
