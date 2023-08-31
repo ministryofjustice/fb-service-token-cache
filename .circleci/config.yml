@@ -174,11 +174,15 @@ workflows:
   version: 2
   test_and_build:
     jobs:
-      - test
-      - build_and_push_image:
+      - login-to-aws:
           context: &moj-forms-context
             - moj-forms
             - moj-forms-platform-apps
+      - test:
+        requires:
+          - login-to-aws
+      - build_and_push_image:
+          context: *moj-forms-context
           requires:
             - test
           filters:
