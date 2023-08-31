@@ -208,6 +208,7 @@ workflows:
             branches:
               only:
                 - master
+                - ecr-token
       # - deploy_to_live_dev_eks:
       #     context: *moj-forms-context
       #     requires:
