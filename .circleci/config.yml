@@ -38,7 +38,7 @@ jobs:
           command: 'make spec'
       - slack/status: &slack_status
           fail_only: true
-          only_for_branches: master
+          only_for_branches: main
           failure_message: ":facepalm:  Failed job $CIRCLE_JOB  :homer-disappear:"
           include_job_number_field: false
   build_and_push_image:
@@ -62,7 +62,7 @@ jobs:
             echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_ae20dfbeaf13151cc489e7f83fd5c17d" >> $BASH_ENV
       - run: &deploy_scripts
           name: cloning deploy scripts
-          command: 'git clone --branch temporary-ecr-creds git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
       - setup_remote_docker: *remote_docker
       - run:
           name: build and push docker images
@@ -123,7 +123,7 @@ jobs:
             K8S_NAMESPACE: formbuilder-platform-live-dev
           command: './deploy-scripts/bin/deploy-eks'
       - slack/status:
-          only_for_branches: master
+          only_for_branches: main
           success_message: ":rocket:  Successfully deployed to Live Dev  :guitar:"
           failure_message: ":alert:  Failed to deploy to Live Dev  :try_not_to_cry:"
           include_job_number_field: false
@@ -145,7 +145,7 @@ jobs:
             K8S_NAMESPACE: formbuilder-platform-live-production
           command: './deploy-scripts/bin/deploy-eks'
       - slack/status:
-          only_for_branches: master
+          only_for_branches: main
           success_message: ":rocket:  Successfully deployed to Live Production  :guitar:"
           failure_message: ":alert:  Failed to deploy to Live Production  :try_not_to_cry:"
           include_job_number_field: false
@@ -189,7 +189,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - deploy_to_test_dev_eks:
           context: *moj-forms-context
           requires:
@@ -206,7 +206,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - deploy_to_live_dev_eks:
           context: *moj-forms-context
           requires:

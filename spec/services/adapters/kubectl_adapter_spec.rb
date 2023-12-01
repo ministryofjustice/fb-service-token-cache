@@ -18,10 +18,6 @@ describe Adapters::KubectlAdapter do
         let(:service_slug) { '; curl https://example.com;' }
         let(:namespace) { 'some-namespace' }
 
-        subject do
-          described_class.new(service_slug: service_slug, namespace: namespace)
-        end
-
         it 'raises an error' do
           expect do
             subject.get_public_key
@@ -46,14 +42,31 @@ describe Adapters::KubectlAdapter do
     end
 
     context 'when a CmdFailedError is raised' do
-      subject do
-        described_class.new(service_slug: 'some-secret', namespace: 'some-namespace')
-      end
-
       it 'should rescue and return empty string' do
         allow(Adapters::ShellAdapter).to receive(:output_of).and_raise(CmdFailedError)
 
         expect(subject.get_public_key).to eq('')
+      end
+    end
+
+    context 'when all is fine' do
+      before do
+        allow(
+          Adapters::ShellAdapter
+        ).to receive(:output_of).with('which kubectl').once.and_return('/usr/local/bin/kubectl')
+      end
+
+      it 'sends the command to the shell adapter' do
+        command = [
+          "/usr/local/bin/kubectl",
+          "get", "configmaps",
+          "-o", "jsonpath='{.data.ENCODED_PUBLIC_KEY}'", "fb-my-service-slug-config-map",
+          "--namespace=my-namespace --ignore-not-found=true"
+        ]
+
+        expect(Adapters::ShellAdapter).to receive(:output_of).with(command)
+
+        subject.get_public_key
       end
     end
   end

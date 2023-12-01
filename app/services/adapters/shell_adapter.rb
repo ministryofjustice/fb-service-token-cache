@@ -11,7 +11,7 @@ class Adapters::ShellAdapter
     result = Kernel.system(cmd_line)
 
     unless result
-      raise CmdFailedError.new(cause: "#{$?}", message: "failing cmd: #{redect_token(cmd_line)}")
+      raise CmdFailedError.new(cause: "#{$?}", message: "failing cmd: #{redact_token(cmd_line)}")
     end
   end
 
