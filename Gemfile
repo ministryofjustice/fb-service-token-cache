@@ -7,13 +7,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rails', '~> 7.0.6'
 gem 'puma', '~> 6.4'
 gem 'redis', '~> 5.0'
-gem 'sentry-rails', '~> 5.14.0'
-gem 'sentry-ruby', '~> 5.14.0'
+gem 'sentry-rails', '~> 5.14'
+gem 'sentry-ruby', '~> 5.14'
 gem 'jwt'
 gem 'sqlite3'
-# Adding this removes some deprecation warnings, caused by double-loading of the net-protocol library
-# we *might* be able to remove this after upgrading to Ruby 3
-gem 'net-http'
 
 group :development, :test do
   gem 'dotenv-rails', require: 'dotenv/rails-now'

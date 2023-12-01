@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/ministryofjustice/fb-service-token-cache/tree/master.svg?style=svg)](https://circleci.com/gh/ministryofjustice/fb-service-token-cache/tree/master)
+[![CircleCI](https://circleci.com/gh/ministryofjustice/fb-service-token-cache/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/fb-service-token-cache/tree/main)
 
 # fb-service-token-cache
 
@@ -24,4 +24,4 @@ make spec
 
 Continuous Integration (CI) is enabled on this project via CircleCI.
 
-On merge to master tests are executed and if green deployed to the test environment. This build can then be promoted to production
+On merge to main tests are executed and if green deployed to the test environment. This build can then be promoted to production
