@@ -21,7 +21,7 @@ spec:
         appGroup: "fb-service-token-cache"
         tier: "frontend"
     spec:
-      serviceAccountName: "formbuilder-service-token-cache-{{ .Values.environmentName }}"
+      serviceAccountName: "formbuilder-service-token-cache-cross-namespace-{{ .Values.environmentName }}"
       containers:
       - name: "fb-service-token-cache-{{ .Values.environmentName }}"
         image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-service-token-cache:{{ .Values.circleSha1 }}"
