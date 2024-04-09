@@ -190,7 +190,6 @@ workflows:
             branches:
               only:
                 - main
-                - legacy-cleanup
       - deploy_to_test_dev_eks:
           context: *moj-forms-context
           requires:
