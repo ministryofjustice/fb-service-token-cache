@@ -14,7 +14,7 @@ class Adapters::FileCacheAdapter
   private
 
   def self.create_cache_dir_if_needed!
-    FileUtils.mkdir_p(cache_dir) unless Dir.exists?(cache_dir)
+    FileUtils.mkdir_p(cache_dir) unless Dir.exist?(cache_dir)
   end
 
   def self.file_path(key)
