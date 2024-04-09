@@ -10,22 +10,18 @@ gem 'redis', '~> 5.0'
 gem 'sentry-rails', '~> 5.14'
 gem 'sentry-ruby', '~> 5.14'
 gem 'jwt'
-gem 'sqlite3'
 
 group :development, :test do
-  gem 'dotenv-rails', require: 'dotenv/rails-now'
+  gem 'dotenv', require: 'dotenv/load'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '>= 3.5.0'
 end
 
 group :development do
   gem 'listen'
-  gem 'guard-rspec', require: false
 end
 
 group :test do
-  gem 'factory_bot_rails', '~> 6.4'
-  gem 'shoulda-matchers', '~> 5.3'
   gem 'simplecov'
   gem 'simplecov-console', require: false
 end

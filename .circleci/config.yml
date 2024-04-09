@@ -6,7 +6,7 @@ orbs:
 jobs:
   login-to-aws:
     docker: &docker_image
-      - image: 'cimg/ruby:3.1.3-node'
+      - image: 'cimg/ruby:3.2.3-node'
     steps:
       - checkout
       - aws-cli/setup:
@@ -26,7 +26,7 @@ jobs:
   test:
     working_directory: ~/circle
     docker:
-      - image: 'cimg/ruby:3.1.3'
+      - image: 'cimg/ruby:3.2.3'
         environment:
           RAILS_ENV: test
     steps:
@@ -190,6 +190,7 @@ workflows:
             branches:
               only:
                 - main
+                - legacy-cleanup
       - deploy_to_test_dev_eks:
           context: *moj-forms-context
           requires:
@@ -203,18 +204,22 @@ workflows:
           requires:
             - deploy_to_test_dev_eks
             - deploy_to_test_production_eks
-          filters:
-            branches:
-              only:
-                - main
       - deploy_to_live_dev_eks:
           context: *moj-forms-context
           requires:
             - acceptance_tests
+          filters:
+            branches:
+              only:
+                - main
       - deploy_to_live_production_eks:
           context: *moj-forms-context
           requires:
             - acceptance_tests
+          filters:
+            branches:
+              only:
+                - main
       - smoke_tests:
           context: *moj-forms-context
           requires:
