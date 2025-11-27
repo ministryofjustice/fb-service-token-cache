@@ -8,6 +8,7 @@ networks:
 
 services:
   api:
+    container_name: service-token-cache-api
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -24,6 +25,7 @@ services:
       - db-net
 
   redis:
+    container_name: service-token-cache-redis
     image: redis:5.0.6-alpine
     networks:
       - db-net
