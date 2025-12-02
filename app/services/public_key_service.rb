@@ -23,7 +23,7 @@ class PublicKeyService
   def public_key
     # In development, pull from the cache adapter directly to avoid
     # calling the authoritative source and to reflect current cached state
-    return cached_value if Rails.env.development?
+    return adapter.get(key) if Rails.env.development?
 
     @public_key ||=
       Support::ServiceTokenAuthoritativeSource.get_public_key(
