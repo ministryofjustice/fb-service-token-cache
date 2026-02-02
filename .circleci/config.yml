@@ -178,16 +178,16 @@ workflows:
             branches:
               only:
                 - master
-      - deploy_to_live_dev_eks:
-          context: *moj-forms-context
-          requires:
-            - acceptance_tests
-      - deploy_to_live_production_eks:
-          context: *moj-forms-context
-          requires:
-            - acceptance_tests
-      - smoke_tests:
-          context: *moj-forms-context
-          requires:
-            - deploy_to_live_dev_eks
-            - deploy_to_live_production_eks
+      # - deploy_to_live_dev_eks:
+      #     context: *moj-forms-context
+      #     requires:
+      #       - acceptance_tests
+      # - deploy_to_live_production_eks:
+      #     context: *moj-forms-context
+      #     requires:
+      #       - acceptance_tests
+      # - smoke_tests:
+      #     context: *moj-forms-context
+      #     requires:
+      #       - deploy_to_live_dev_eks
+      #       - deploy_to_live_production_eks
