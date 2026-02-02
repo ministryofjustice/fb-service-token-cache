@@ -1,7 +1,14 @@
 version: '3.4'
 
+networks:
+  app-net:
+    name: fb-app-bridge-network
+  db-net:
+    name: fb-db-bridge-network
+
 services:
-  app:
+  api:
+    container_name: service-token-cache-api
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -9,3 +16,16 @@ services:
       - '3000:3000'
     environment:
       SECRET_KEY_BASE: 'super_secret'
+      SERVICE_TOKEN_CACHE_TTL: 999999
+      RAILS_ENV: development
+    depends_on:
+      - redis
+    networks:
+      - app-net
+      - db-net
+
+  redis:
+    container_name: service-token-cache-redis
+    image: redis:5.0.6-alpine
+    networks:
+      - db-net

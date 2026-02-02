@@ -1,21 +1,31 @@
 require 'rails_helper'
 
 RSpec.describe ServiceTokenV3Controller do
+  let(:kubectl_adapter) { instance_double(Adapters::KubectlAdapter, get_public_key: public_key) }
+  let(:public_key) { 'v3-public-key' }
+
+  let(:service_slug) { 'test-service' }
+  let(:namespace) { 'basset-hound' }
+
+  before do
+    allow(
+      Adapters::KubectlAdapter
+    ).to receive(:new).with(service_slug:, namespace:).and_return(kubectl_adapter)
+  end
+
   describe '#show' do
-    let(:params) { { service_slug: 'test-service', namespace: 'basset-hound' } }
+    let(:params) { { service_slug:, namespace: } }
 
     it 'returns public key' do
-      allow(Support::ServiceTokenAuthoritativeSource).to receive(:get_public_key).and_return('v3-public-key')
-
       get :show, params: params
       expect(response).to be_successful
-      expect(JSON.parse(response.body)['token']).to eql('v3-public-key')
+      expect(JSON.parse(response.body)['token']).to eql(public_key)
     end
 
     context 'when service does not exist' do
-      it 'returns 404' do
-        allow(Support::ServiceTokenAuthoritativeSource).to receive(:get_public_key).and_return('')
+      let(:public_key) { '' }
 
+      it 'returns 404' do
         get :show, params: params
         expect(response).to be_not_found
       end
@@ -25,7 +35,6 @@ RSpec.describe ServiceTokenV3Controller do
       before do
         allow(ENV).to receive(:[])
         allow(ENV).to receive(:[]).with('IGNORE_CACHE').and_return('true')
-        allow(Support::ServiceTokenAuthoritativeSource).to receive(:get_public_key).and_return('v3-public-key')
         get :show, params: params
       end
 
@@ -36,9 +45,8 @@ RSpec.describe ServiceTokenV3Controller do
       end
     end
 
-    context 'when ignore cache query param is present' do
+    context 'when ignore_cache query param is present' do
       before do
-        allow(Support::ServiceTokenAuthoritativeSource).to receive(:get_public_key).and_return('v3-public-key')
         get :show, params: params.merge(ignore_cache: 'true')
       end
 

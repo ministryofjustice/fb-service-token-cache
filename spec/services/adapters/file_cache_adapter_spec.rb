@@ -59,7 +59,7 @@ describe Adapters::FileCacheAdapter do
     end
     context 'when the cache_dir exists' do
       before do
-        allow(Dir).to receive(:exists?).with(cache_dir).and_return(true)
+        allow(Dir).to receive(:exist?).with(cache_dir).and_return(true)
       end
       it 'does not create it' do
         expect(FileUtils).to_not receive(:mkdir_p).with(cache_dir)
@@ -68,7 +68,7 @@ describe Adapters::FileCacheAdapter do
     end
     context 'when the cache_dir does not exist' do
       before do
-        allow(Dir).to receive(:exists?).with(cache_dir).and_return(false)
+        allow(Dir).to receive(:exist?).with(cache_dir).and_return(false)
       end
       it 'does create it' do
         expect(FileUtils).to receive(:mkdir_p).with(cache_dir)

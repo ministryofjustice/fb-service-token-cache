@@ -1,4 +1,4 @@
-FROM ruby:3.1.3-alpine3.16
+FROM ruby:3.2.3-alpine3.19
 
 RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
 RUN apk add --no-cache gcompat

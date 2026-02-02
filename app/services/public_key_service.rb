@@ -8,16 +8,14 @@ class PublicKeyService
   end
 
   def call
-    if ignore_cache
-      public_key
-    else
-      if cached_value
-        cached_value
-      else
-        adapter.put(key, public_key, { ex: ttl_in_seconds })
-        public_key
-      end
-    end
+    return public_key if ignore_cache
+    return cached_value if cached_value
+
+    adapter.put(
+      key, public_key, { ex: ttl_in_seconds }
+    )
+
+    public_key
   end
 
   private

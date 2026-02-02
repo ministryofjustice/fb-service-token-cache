@@ -1,4 +1,5 @@
 class HealthController < ApplicationController
+  # :nocov:
   def show
     render plain: 'healthy'
   end
@@ -8,4 +9,5 @@ class HealthController < ApplicationController
       render plain: 'ready'
     end
   end
+  # :nocov:
 end
