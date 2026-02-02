@@ -32,11 +32,6 @@ spec:
           preStop:
             exec:
               command: ["/bin/sleep", "10"]
-        {{- if (eq .Values.environmentName "test-dev") }}
-        resources:
-          requests:
-            cpu: "500m"
-        {{- end }}
         ports:
           - containerPort: 3000
         livenessProbe:
