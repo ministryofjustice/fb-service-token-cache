@@ -50,8 +50,7 @@ spec:
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
         resources:
           requests:
-            cpu: "500m"
-            memory: "128Mi"
+            cpu: {{ .Values.resources.requests.cpu }}
         # non-secret env vars
         # defined in config_map.yaml
         envFrom:
