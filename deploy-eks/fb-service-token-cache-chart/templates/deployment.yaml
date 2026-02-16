@@ -48,7 +48,7 @@ spec:
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
-                resources:
+        resources:
           requests:
             cpu: "500m"
             memory: "128Mi"
