@@ -48,7 +48,10 @@ spec:
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
-
+                resources:
+          requests:
+            cpu: "500m"
+            memory: "128Mi"
         # non-secret env vars
         # defined in config_map.yaml
         envFrom:
