@@ -7,14 +7,14 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rails', '~> 7.2.3.1'
 gem 'puma', '~> 6.4'
 gem 'redis', '~> 5.0'
-gem 'sentry-rails', '~> 5.14'
-gem 'sentry-ruby', '~> 5.14'
+gem 'sentry-rails', '~> 5.20.0'
+gem 'sentry-ruby', '~> 5.20.0'
 gem 'jwt'
 
 group :development, :test do
   gem 'dotenv', require: 'dotenv/load'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rspec-rails', '>= 3.5.0'
+  gem 'rspec-rails', '~> 7.0.2'
 end
 
 group :development do
