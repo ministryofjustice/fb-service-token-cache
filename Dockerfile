@@ -1,6 +1,6 @@
-FROM ruby:3.2.3-alpine3.19
+FROM ruby:3.3.11-alpine
 
-RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata
+RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata libffi-dev yaml-dev
 RUN apk add --no-cache gcompat
 
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
