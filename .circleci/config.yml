@@ -186,6 +186,10 @@ workflows:
           context: *moj-forms-context
           requires:
             - test
+          filters:
+            branches:
+              only:
+                - main
       - deploy_to_test_dev_eks:
           context: *moj-forms-context
           requires:
