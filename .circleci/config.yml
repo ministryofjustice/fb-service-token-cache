@@ -186,10 +186,6 @@ workflows:
           context: *moj-forms-context
           requires:
             - test
-          filters:
-            branches:
-              only:
-                - add-deploy-to-live-gate-testing-test-pipeline
       - deploy_to_test_dev_eks:
           context: *moj-forms-context
           requires:
