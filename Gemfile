@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby File.read('.ruby-version').chomp
+ruby file: '.ruby-version'
 
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rails', '~> 8.1.3.1'

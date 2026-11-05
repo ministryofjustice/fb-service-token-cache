@@ -1,4 +1,4 @@
-FROM ruby:3.4.9-alpine
+FROM ruby:4.0.9-alpine
 
 RUN apk add build-base bash libcurl sqlite sqlite-dev sqlite-libs tzdata libffi-dev yaml-dev
 RUN apk add --no-cache gcompat
@@ -23,7 +23,7 @@ WORKDIR /app
 COPY Gemfile* .ruby-version ./
 
 ARG BUNDLE_FLAGS
-RUN gem install bundler
+RUN gem install bundler -v 4.0.24
 RUN bundle config set force_ruby_platform true
 RUN bundle install --jobs 4
 
